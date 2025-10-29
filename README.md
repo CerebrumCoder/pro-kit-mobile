@@ -10,7 +10,24 @@ Jawaban:
     * Setiap widget berada dalam induknya dan mendapat "context" yang berasal dari induk. Cara bekerjanya, data dikirimkan kepada anak2nya melalui argumen constructor atau context
 2. Sebutkan semua widget yang kamu gunakan dalam proyek ini dan jelaskan fungsinya.\
 Jawaban:
-    * Tes2
+    * Custom widgets (dideklarasikan di file):
+        * ```ProKitApp``` — root app widget yang mengembalikan ```MaterialApp```.
+        * ```BasePage``` — halaman utama (home) yang membangun struktur UI utama (AppBar, body, grid).
+        * ```InfoCard``` — kartu kecil untuk menampilkan judul + isi (NPM, Name, Class).
+        * ```ItemHomepage``` — model data untuk item grid (nama, ikon, warna).
+        * ```ItemCard``` — kartu grid untuk setiap ```ItemHomepage```, menampilkan ikon + nama dan menangani tap (menampilkan SnackBar).
+    * Flutter framework widgets yang dipakai di dalam file dan fungsinya:
+        * ```MaterialApp``` — konfigurasi aplikasi berbasis Material (tema, home, title).
+        * ```Scaffold``` — struktur dasar halaman (AppBar + body).
+        * ```AppBar``` — bar atas dengan judul dan ikon.
+        * ```Row``` / ```Column``` — susunan horizontal / vertikal elemen.
+        * ```Icon``` / ```Text``` — menampilkan ikon dan teks.
+        * ```Padding``` / ```SizedBox``` / ```Center``` — spacing & alignment.
+        * ```GridView.count``` — grid tiga kolom untuk menampilkan ItemCard.
+        * ```Card``` / ```Container``` — elemen kotak untuk layout dan styling.
+        * ```MediaQuery``` — membaca ukuran layar untuk responsif.
+        * ```Material``` / ```InkWell``` — efek material dan deteksi tap pada ItemCard.
+        * ```ScaffoldMessenger``` / ```SnackBar``` — menampilkan pesan saat item ditekan.
 3. Apa fungsi dari widget MaterialApp? Jelaskan mengapa widget ini sering digunakan sebagai widget root.\
 Jawaban:
     * Fungsinya yaitu untuk membentuk aplikasi yang menggunakan Material Design. Widget ini sering digunakan sebagai root, karena mengimplementasi Material Design milik Google, sehingga menghasilkan komponen dan sifat Android-style UI 
