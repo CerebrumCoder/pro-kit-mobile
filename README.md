@@ -28,6 +28,7 @@ Jawaban:
     * "Hot Restart" adalah fitur yang juga sama seperti "Hot Reload" tetapi bedanya, dia restart aplikasi dan reset app state aplikasinya. Sehingga seolah-olah mengulang semuanya dari nol
 7. Jelaskan bagaimana kamu menambahkan navigasi untuk berpindah antar layar di aplikasi Flutter.\
 Jawaban:
-    * Pertama-tama kita membuat 2 route/2 widget utama yang mengextend **StatelessWidget**
+    * Pertama-tama kita membuat 2 route atau 2 widget utama yang mengextend **StatelessWidget**
     * Kedua, kita membuat sebuah tombol di suatu halaman, lalu isi ```onPressed:``` dengan alat bantu ```Navigator.push()```
     * Apabila ingin kembali ke halaman sebelumnya, isi ```onPressed:``` dengan alat bantu ```Navigator.pop()```
+    * Untuk implementasi di keadaan lain, untuk membantu melakukan navigasi wajib/kudu ada ```Navigator.push()``` di dalam konstruktor ```onPressed:```
