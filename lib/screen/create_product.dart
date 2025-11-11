@@ -81,7 +81,7 @@ class _CreateProductState extends State<CreateProduct> {
   String? _thumbnailValidator(String? v) {
     // Thumbnail sekarang opsional: tidak validasi jika kosong.
     if (v == null || v.trim().isEmpty) {
-      return null;
+      return 'Thumbnail wajib diisi!';
     }
     final uri = Uri.tryParse(v.trim());
 
@@ -106,9 +106,10 @@ class _CreateProductState extends State<CreateProduct> {
 
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
+    final category = _selectedCategory ?? '';
     final thumbnailRaw = _thumbNailController.text.trim();
     final String? thumbnail = thumbnailRaw.isEmpty ? null : thumbnailRaw;
-    final category = _selectedCategory ?? '';
+    
 
     final stock = int.tryParse(_stockController.text.trim());
     final rating = double.tryParse(_ratingController.text.trim());
@@ -141,15 +142,12 @@ class _CreateProductState extends State<CreateProduct> {
             child: ListBody(
               children: [
                 Text('Name: ${product['name']}'),
-                Text('Price: Rp ${product['price']}'),
-                Text('Category: ${product['category']}'),
+                Text('Price: Rp ${product['price']}'),                
                 Text('Description: ${product['description']}'),
+                Text('Thumbnail URL: ${product['thumbnail']}'),
+                Text('Category: ${product['category']}'),
                 Text('Stock: ${product['stock']}'),
-                Text('Rating: ${product['rating']}'),
-
-                if (product['thumbnail'] != null) 
-                  Text('Thumbnail: ${product['thumbnail']}'),
-                
+                Text('Rating (0-5): ${product['rating']}'),
               ],
             ),
           ),
@@ -211,7 +209,7 @@ class _CreateProductState extends State<CreateProduct> {
                 const SizedBox(height: 12,),
                 TextFormField(
                   controller: _thumbNailController,
-                  decoration: const InputDecoration(labelText: 'Thumbnail URL (Opsional)'),
+                  decoration: const InputDecoration(labelText: 'Thumbnail URL'),
                   validator: _thumbnailValidator,
                 ),
                 const SizedBox(height: 12,),
