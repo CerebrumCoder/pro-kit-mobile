@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:pro_kit/screen/create_product.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pro_kit/screens/base.dart';
+import 'package:pro_kit/screens/create_product.dart';
+import 'package:pro_kit/screens/login.dart';
+import 'package:pro_kit/screens/product_entry_list.dart';
+import 'package:provider/provider.dart';
 
 class ProKitDrawer extends StatelessWidget {
   const ProKitDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Drawer(
       child: ListView(
         children: [
@@ -45,7 +51,7 @@ class ProKitDrawer extends StatelessWidget {
             leading: const Icon(Icons.home_outlined),
             title: const Text("Home"),
             onTap: () {
-              Navigator.pop(context); 
+              Navigator.push(context, MaterialPageRoute(builder: (_) => BasePage()));
             },
           ),
 
@@ -55,7 +61,42 @@ class ProKitDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateProduct()));
             },
-          )
+          ),
+          ListTile(
+              leading: const Icon(Icons.add_reaction_rounded),
+              title: const Text('Product List'),
+              onTap: () {
+                  // Route to Product list page
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ProductEntryListPage()),
+                  );
+              },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout_rounded),
+            title: const Text("Logout"),
+            onTap: () async {
+              final response = await request.logout("http://localhost:8000/auth/logout/");
+
+              String message = response["message"] ?? "Logged out";
+              bool status = response["status"] ?? false;
+
+              if (!context.mounted) return;
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+
+              if (status) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  (route) => false,
+                ); 
+              }
+            },
+          ),
         ],
       ),
     );

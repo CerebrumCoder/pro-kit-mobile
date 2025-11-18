@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pro_kit/screen/create_product.dart';
+import 'package:pro_kit/models/product_entry.dart';
+import 'package:pro_kit/screens/create_product.dart';
+import 'package:pro_kit/screens/login.dart';
+import 'package:pro_kit/screens/product_entry_list.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 
 class InfoCard extends StatelessWidget {
@@ -54,6 +59,7 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Material(
       // Menentukan warna latar belakang dari tema aplikasi.
       color: item.color,
@@ -63,8 +69,8 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         // Aksi ketika kartu ditekan.
         onTap: () async {
-          // Navigate to CreateProduct page for the Create Product tile.
           if (item.name == "Create Product") {
+            // Navigate to CreateProduct page for the Create Product tile.
             final result = await Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const CreateProduct()),
             );
@@ -101,7 +107,48 @@ class ItemCard extends StatelessWidget {
               );
             }
             return;
+          } else if (item.name == "All Products") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ProductEntryListPage(),
+              ),
+            );
+          } else if (item.name == "My Products") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ProductEntryListPage(onlyMine: true),
+              ),
+            );
+          } else if (item.name == "Logout") {
+              // TODO: Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
+              // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
+              // If you using chrome,  use URL http://localhost:8000
+              
+              final response = await request.logout(
+                  "http://localhost:8000/auth/logout/");
+              String message = response["message"];
+              if (context.mounted) {
+                  if (response['status']) {
+                      String uname = response["username"];
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("$message See you again, $uname."),
+                      ));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                      );
+                  } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(message),
+                          ),
+                      );
+                  }
+              }
           }
+
           // Menampilkan pesan SnackBar saat kartu ditekan.
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
@@ -136,4 +183,111 @@ class ItemCard extends StatelessWidget {
     );
   }
 
+}
+
+class ProductCard extends StatelessWidget {
+  final ProductEntry product;
+  final VoidCallback? onTap;
+  const ProductCard({super.key, required this.product, this.onTap});
+
+  Widget _stars(double rating) {
+    final full = rating.floor();
+    final half = (rating - full) >= 0.5;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(5, (i) {
+        if (i < full) return const Icon(Icons.star, color: Colors.amber, size: 14);
+        if (i == full && half) return const Icon(Icons.star_half, color: Colors.amber, size: 14);
+        return const Icon(Icons.star_border, color: Colors.amber, size: 14);
+      }),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Gambar dibuat lebih pendek supaya ruang teks lebih lega
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+              child: Image.network(
+                product.thumbnail,
+                height: 90,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  height: 90,
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.broken_image),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Nama: maksimal 2 baris, ellipsis kalau kepanjangan
+                  Text(
+                    product.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Category: ${product.category}',
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 4),
+                  // Deskripsi pendek (1–2 baris)
+                  Text(
+                    product.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    product.priceFormatted,
+                    style: const TextStyle(color: Colors.green),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      _stars(product.rating),
+                      const SizedBox(width: 8),
+                      Text(
+                        product.rating.toStringAsFixed(1),
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      const Spacer(),
+                      if (product.isFeatured)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.orange,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'Featured',
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

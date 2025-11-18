@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pro_kit/widgets/prokit_card.dart';
 import 'package:pro_kit/widgets/prokit_drawer.dart';
-import 'package:pro_kit/screen/create_product.dart';
+import 'package:pro_kit/screens/create_product.dart';
 
 
 // Ini adalah halaman dasar (base page) dari aplikasi Pro Kit.
